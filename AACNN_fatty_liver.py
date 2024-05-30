@@ -6,6 +6,7 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from PIL import Image
 
+# Custom Dataset class for loading liver images
 class LiverDataset(Dataset):
     def __init__(self, normal_dir, abnormal_dir, transform=None):
         self.normal_dir = os.path.abspath(normal_dir).replace("\\", "/")
@@ -31,7 +32,7 @@ class LiverDataset(Dataset):
             image = self.transform(image)
         return image, label
 
-# Define transformations
+# Define image transformations
 transform = transforms.Compose([
     transforms.Resize((128, 128)),
     transforms.RandomHorizontalFlip(),
@@ -57,11 +58,12 @@ except FileNotFoundError as e:
     print("Please ensure the dataset directories are correctly set up.")
     raise
 
+# Create data loaders
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
 test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
 
-# Define the model with attention mechanism
+# Define the Attention Block used in the network
 class AttentionBlock(nn.Module):
     def __init__(self, in_channels):
         super(AttentionBlock, self).__init__()
@@ -82,6 +84,7 @@ class AttentionBlock(nn.Module):
         out = out + x
         return out
 
+# Define the main model architecture
 class AttentionCNN(nn.Module):
     def __init__(self, num_classes=2):
         super(AttentionCNN, self).__init__()
@@ -109,6 +112,7 @@ class AttentionCNN(nn.Module):
         x = self.fc2(x)
         return x
 
+# Initialize the model
 model = AttentionCNN()
 
 # Define loss function and optimizer
